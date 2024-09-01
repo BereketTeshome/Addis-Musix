@@ -11,7 +11,7 @@ function* fetchSongsSaga() {
   try {
     const response = yield call(
       axios.get,
-      "http://localhost:3001/api/song/get"
+      "https://addis-musix-backend.vercel.app/api/song/get"
     );
     yield put(fetchSongsSuccess(response.data.songs));
   } catch (error) {
@@ -23,7 +23,7 @@ function* fetchSongsSagaById({ id }) {
   try {
     const response = yield call(
       axios.get,
-      `http://localhost:3001/api/song/get${id}`
+      `https://addis-musix-backend.vercel.app/api/song/get${id}`
     );
     yield put(fetchSongsSuccess(response.data.favorite));
   } catch (error) {

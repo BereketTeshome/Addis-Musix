@@ -22,7 +22,9 @@ const Uploads = () => {
 
   const fetchUploads = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/song/get");
+      const response = await axios.get(
+        "https://addis-musix-backend.vercel.app/api/song/get"
+      );
       const uploadedSongs = response.data.songs.filter(
         (song) => song.uploadedBy === userId
       );
@@ -53,7 +55,9 @@ const Uploads = () => {
 
   const handleDelete = async (songId) => {
     try {
-      await axios.delete(`http://localhost:3001/api/song/delete/${songId}`);
+      await axios.delete(
+        `https://addis-musix-backend.vercel.app/api/song/delete/${songId}`
+      );
       setSongs((prevSongs) => prevSongs.filter((song) => song._id !== songId));
     } catch (err) {
       console.error("Error deleting song:", err);

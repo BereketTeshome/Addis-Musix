@@ -20,7 +20,7 @@ const Favorites = () => {
     const fetchFavorites = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/song/favorites/${userId}`
+          `https://addis-musix-backend.vercel.app/api/song/favorites/${userId}`
         );
         setFavoriteSongs(response.data.favorite);
       } catch (err) {
@@ -38,7 +38,7 @@ const Favorites = () => {
   const handleUnfavoriteClick = async (songId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3001/api/song/favorite/${songId}`
+        `https://addis-musix-backend.vercel.app/api/song/favorite/${songId}`
       );
       if (response.status === 200) {
         setFavoriteSongs((prev) => prev.filter((song) => song._id !== songId));

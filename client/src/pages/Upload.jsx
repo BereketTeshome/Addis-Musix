@@ -49,7 +49,10 @@ const Upload = () => {
           formData.coverImageUrl ||
           "https://firebasestorage.googleapis.com/v0/b/test-13c4e.appspot.com/o/No%20user%20profile%20picture.jpg?alt=media&token=fe5793bb-58bb-4b9c-bf81-173cd0006d05",
       };
-      await axios.post("http://localhost:3001/api/song/create", uploadData);
+      await axios.post(
+        "https://addis-musix-backend.vercel.app/api/song/create",
+        uploadData
+      );
       alert("Song uploaded successfully!");
       setFormData({
         title: "",

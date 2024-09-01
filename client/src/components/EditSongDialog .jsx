@@ -31,7 +31,7 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
       const fetchSongData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3001/api/song/edit/${songId}`
+            `https://addis-musix-backend.vercel.app/api/song/edit/${songId}`
           );
           setFormData(response.data);
         } catch (error) {
@@ -61,7 +61,7 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
   const handleSubmit = async () => {
     try {
       await axios.put(
-        `http://localhost:3001/api/song/edit/${songId}`,
+        `https://addis-musix-backend.vercel.app/api/song/edit/${songId}`,
         formData
       );
       onUpdate();
@@ -81,7 +81,7 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
 
     try {
       await axios.put(
-        `http://localhost:3001/api/song/edit/${songId}`,
+        `https://addis-musix-backend.vercel.app/api/song/edit/${songId}`,
         formData
       );
       onClose();
