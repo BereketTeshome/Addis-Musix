@@ -13,10 +13,15 @@ const notFoundContainer = css`
   height: 90vh;
   align-items: center;
   justify-content: center;
+  width: 100%;
 `;
 
 const notFoundImage = css`
-  width: 100%;
+  width: 60%;
+
+  @media (max-width: 868px) {
+    width: 100%;
+  }
 `;
 
 export default NotFound;

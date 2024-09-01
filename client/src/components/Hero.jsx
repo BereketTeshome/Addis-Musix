@@ -82,6 +82,16 @@ function Hero() {
     }
   `;
 
+  const navigateStyle = css`
+    @media (max-width: 850px) {
+      display: none;
+    }
+
+    @media (max-width: 520px) {
+      display: block;
+    }
+  `;
+
   return (
     <VisibilitySensor
       onChange={(isVisible) => setElementIsVisible(isVisible)}
@@ -265,7 +275,12 @@ function Hero() {
             justify-content: center;
           `}
         >
-          <img src="Group 9.png" alt="navigate.png" width={200} />
+          <img
+            src="Group 9.png"
+            alt="navigate.png"
+            width={200}
+            css={navigateStyle}
+          />
         </span>
       </>
     </VisibilitySensor>

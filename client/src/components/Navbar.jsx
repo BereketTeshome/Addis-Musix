@@ -142,9 +142,8 @@ function Navbar() {
                 onClick={() => {
                   handleCloseUserMenu();
 
-                  // Check if the page is "Upload"
                   if (page === "Upload") {
-                    if (token === true && token !== "undefined") {
+                    if (token && token !== "undefined") {
                       dispatch(changeComponent("Upload"));
                     } else {
                       alert(
@@ -163,7 +162,7 @@ function Navbar() {
             ))}
           </Box>
 
-          {token === true && token != "undefined" ? (
+          {token && token != "undefined" ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -59,7 +59,7 @@ const Registration = () => {
       } else {
         const data = await response.json();
         cookie.set("user_token", data.token);
-        navigate("/signin");
+        navigate("/signIn");
         window.location.reload();
       }
     } catch (error) {
