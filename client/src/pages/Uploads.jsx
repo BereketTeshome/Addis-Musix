@@ -188,7 +188,7 @@ const songDetailsStyle = css`
 
 const iconsStyle = css`
   position: absolute;
-  top: 0;
+  top: 15px;
   right: 0;
   color: #ff4081;
 `;

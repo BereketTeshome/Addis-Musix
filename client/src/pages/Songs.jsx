@@ -25,11 +25,13 @@ const Songs = () => {
 
   const cookie = new Cookies();
   const token = cookie.get("user_token");
-  const uploadedBy = jwtDecode(token).userId;
+  const uploadedBy = token ? jwtDecode(token).userId : "";
 
   useEffect(() => {
     dispatch(fetchSongsRequest());
-    dispatch(fetchFavoriteSongsRequest(uploadedBy));
+    {
+      uploadedBy && dispatch(fetchFavoriteSongsRequest(uploadedBy));
+    }
   }, [dispatch, uploadedBy]);
 
   const handleSongClick = (song) => {
