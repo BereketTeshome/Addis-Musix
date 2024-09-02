@@ -15,7 +15,7 @@ export const componentSlice = createSlice({
   reducers: {
     changeComponent: (state, action) => {
       switch (action.payload) {
-        case "homePage":
+        case "Home":
           state.component = <HomePage />;
           break;
         case "Songs":

@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import createSagaMiddleware from "redux-saga"; // Import redux-saga middleware
 import componentReducer from "./features/ComponentSlice.jsx";
 import songsReducer from "./features/songsSlice.jsx"; // Import the songs reducer
+import uploadsReducer from "./features/uploadsSlice.jsx"; // Import the uploads reducer
 import rootSaga from "./features/sagas.jsx"; // Import your root saga
 import App from "./App.jsx";
 
@@ -17,6 +18,7 @@ const store = configureStore({
   reducer: {
     component: componentReducer,
     songs: songsReducer,
+    uploads: uploadsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware), // Add saga middleware to the store

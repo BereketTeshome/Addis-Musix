@@ -19,6 +19,7 @@ import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
 const pages = ["Songs", "Upload"];
+const pagesMobile = ["Home", "Songs", "Upload"];
 const settings = ["Favorites", "Uploads", "Logout"];
 
 function Navbar() {
@@ -104,7 +105,7 @@ function Navbar() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
             >
-              {pages.map((page) => (
+              {pagesMobile.map((page) => (
                 <MenuItem
                   key={page}
                   onClick={() => {

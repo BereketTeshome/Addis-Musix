@@ -9,7 +9,6 @@ const Footer = () => {
   return (
     <footer css={footerStyle}>
       <div css={footerContentStyle}>
-        {/* Logo Section */}
         <div css={logoStyle}>
           <img src="/music icon.png" alt="music logo" css={logo} />
           <span>Addis-MUSIX</span>
@@ -20,7 +19,7 @@ const Footer = () => {
           <a
             href="/"
             css={linkStyle}
-            onClick={() => dispatch(changeComponent("homePage"))}
+            onClick={() => dispatch(changeComponent("Home"))}
           >
             Home
           </a>
@@ -60,7 +59,6 @@ const Footer = () => {
           </a>
         </div>
 
-        {/* Paragraph Section */}
         <p css={paragraphStyle}>
           Discover a world of music with ADDIS-MUSIX. Stay tuned, stay
           connected, and let the rhythm take you away!

@@ -1,56 +1,41 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { css } from "@emotion/react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import IconButton from "@mui/material/IconButton";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import NotFound from "../components/NotFound";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchFavoriteSongsRequest,
+  deleteFavoriteSongRequest,
+} from "../features/songsSlice";
+import Loader from "../components/Loader";
 
 const Favorites = () => {
-  const [favoriteSongs, setFavoriteSongs] = useState([]);
-  const [error, setError] = useState(null);
   const [selectedSong, setSelectedSong] = useState(null);
   const cookie = new Cookies();
   const token = cookie.get("user_token");
-  const userId = jwtDecode(token).userId;
+  const uploadedBy = jwtDecode(token).userId;
+  const dispatch = useDispatch();
+  const { error, favoriteSongs, loading } = useSelector((state) => state.songs);
 
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await axios.get(
-          `https://addis-musix-backend.vercel.app/api/song/favorites/${userId}`
-        );
-        setFavoriteSongs(response.data.favorite);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    fetchFavorites();
-  }, [userId]);
+    dispatch(fetchFavoriteSongsRequest(uploadedBy));
+  }, [dispatch, uploadedBy]);
 
   const handleSongClick = (song) => {
     setSelectedSong(selectedSong === song ? null : song);
   };
 
-  const handleUnfavoriteClick = async (songId) => {
-    try {
-      const response = await axios.delete(
-        `https://addis-musix-backend.vercel.app/api/song/favorite/${songId}`
-      );
-      if (response.status === 200) {
-        setFavoriteSongs((prev) => prev.filter((song) => song._id !== songId));
-      }
-    } catch (error) {
-      console.error("Error removing from favorites:", error);
-    }
+  const handleUnfavoriteClick = (songId) => {
+    dispatch(deleteFavoriteSongRequest(songId));
   };
 
-  if (favoriteSongs.length < 1) {
-    return <NotFound />;
-  }
+  if (loading) return <Loader />;
+
+  if (favoriteSongs.length < 1) return <NotFound />;
 
   if (error) return <p css={errorStyle}>Error: {error}</p>;
 

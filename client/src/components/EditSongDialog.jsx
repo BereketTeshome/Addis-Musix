@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -56,24 +56,6 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await axios.put(
-        `https://addis-musix-backend.vercel.app/api/song/edit/${songId}`,
-        formData
-      );
-      onUpdate();
-      onClose();
-    } catch (error) {
-      console.error("Error updating song:", error);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {

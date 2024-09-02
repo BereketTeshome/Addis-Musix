@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Cookies from "universal-cookie";
 
-// Updated schema to include confirmPassword validation
 const loginSchema = z
   .object({
     email: z.string().email("Invalid email address"),
@@ -15,7 +14,7 @@ const loginSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"], // path of error
+    path: ["confirmPassword"],
   });
 
 const Registration = () => {

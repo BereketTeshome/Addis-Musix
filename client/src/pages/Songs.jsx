@@ -1,30 +1,36 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchSongsRequest,
+  fetchFavoriteSongsRequest,
+  toggleFavorite,
+} from "../features/songsSlice.jsx";
+import { css } from "@emotion/react";
 import Loader from "../components/Loader";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import IconButton from "@mui/material/IconButton";
 import Cookies from "universal-cookie";
-import { css } from "@emotion/react";
-import { fetchSongsRequest, toggleFavorite } from "../features/songsSlice.jsx";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 const Songs = () => {
-  const dispatch = useDispatch();
-  const songs = useSelector((state) => state.songs.songs);
-  const loading = useSelector((state) => state.songs.loading);
-  const error = useSelector((state) => state.songs.error);
-  const favoriteSongs = useSelector((state) => state.songs.favoriteSongs);
-
   const [selectedSong, setSelectedSong] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
+  const { songs, loading, error, favoriteSongs } = useSelector(
+    (state) => state.songs
+  );
 
   const cookie = new Cookies();
   const token = cookie.get("user_token");
+  const uploadedBy = jwtDecode(token).userId;
 
   useEffect(() => {
-    dispatch(fetchSongsRequest()); // Dispatch fetchSongsRequest action
-  }, [dispatch]);
+    dispatch(fetchSongsRequest());
+    dispatch(fetchFavoriteSongsRequest(uploadedBy));
+  }, [dispatch, uploadedBy]);
 
   const handleSongClick = (song) => {
     setSelectedSong(selectedSong === song ? null : song);
@@ -34,8 +40,29 @@ const Songs = () => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const handleFavoriteClick = (song) => {
-    dispatch(toggleFavorite(song._id)); // Dispatch toggleFavorite action
+  const handleFavoriteClick = async (song) => {
+    const {
+      _id: songId,
+      title,
+      artist,
+      album,
+      genre,
+      releaseDate,
+      coverImageUrl,
+    } = song;
+
+    await axios.post("http://localhost:3001/api/song/favorite", {
+      songId,
+      title,
+      artist,
+      album,
+      genre,
+      releaseDate,
+      coverImageUrl,
+      uploadedBy,
+    });
+
+    dispatch(toggleFavorite(song._id));
   };
 
   const filteredSongs = songs.filter(
@@ -45,12 +72,7 @@ const Songs = () => {
       song.genre.toLowerCase().includes(searchTerm)
   );
 
-  if (loading)
-    return (
-      <p css={loadingStyle}>
-        <Loader />
-      </p>
-    );
+  if (loading) return <Loader />;
   if (error) return <p css={errorStyle}>Error: {error}</p>;
 
   return (
@@ -82,16 +104,18 @@ const Songs = () => {
               {token && (
                 <IconButton
                   aria-label="add to favorites"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent song click event
-                    handleFavoriteClick(song); // Pass the entire song object
-                  }}
                   css={favoriteIconStyle}
                 >
-                  {favoriteSongs.includes(song._id) ? (
+                  {favoriteSongs.some((fav) => fav.songId === song._id) ? (
                     <FavoriteIcon css={favoriteFilledStyle} />
                   ) : (
-                    <FavoriteBorderOutlinedIcon css={favoriteBorderStyle} />
+                    <FavoriteBorderOutlinedIcon
+                      css={favoriteBorderStyle}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent song click event
+                        handleFavoriteClick(song);
+                      }}
+                    />
                   )}
                 </IconButton>
               )}
@@ -208,12 +232,6 @@ const songDetailsStyle = css`
       max-height: 500px;
     }
   }
-`;
-
-const loadingStyle = css`
-  color: #fff;
-  text-align: center;
-  margin-top: 20px;
 `;
 
 const errorStyle = css`

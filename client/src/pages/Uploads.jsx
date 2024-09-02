@@ -1,42 +1,31 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUploads, deleteSong } from "../features/uploadsSlice";
 import { css } from "@emotion/react";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-import EditSongDialog from "../components/EditSongDialog ";
 import NotFound from "../components/NotFound";
+import EditSongDialog from "../components/EditSongDialog";
+import Loader from "../components/Loader";
 
 const Uploads = () => {
-  const [songs, setSongs] = useState([]);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { songs, error, loading } = useSelector((state) => state.uploads);
   const [selectedSong, setSelectedSong] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentSongId, setCurrentSongId] = useState(null);
+
   const cookie = new Cookies();
   const token = cookie.get("user_token");
   const userId = jwtDecode(token).userId;
 
-  const fetchUploads = async () => {
-    try {
-      const response = await axios.get(
-        "https://addis-musix-backend.vercel.app/api/song/get"
-      );
-      const uploadedSongs = response.data.songs.filter(
-        (song) => song.uploadedBy === userId
-      );
-      setSongs(uploadedSongs);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   useEffect(() => {
-    fetchUploads();
-  }, [token]);
+    dispatch(fetchUploads(userId));
+  }, [dispatch, userId]);
 
   const handleEdit = (songId) => {
     setCurrentSongId(songId);
@@ -46,29 +35,22 @@ const Uploads = () => {
   const handleDialogClose = () => {
     setEditDialogOpen(false);
     setCurrentSongId(null);
-    fetchUploads(); // Refresh the songs list after editing
+    dispatch(fetchUploads(userId)); // Refresh the songs list after editing
   };
 
   const handleSongClick = (song) => {
     setSelectedSong(selectedSong === song ? null : song);
   };
 
-  const handleDelete = async (songId) => {
-    try {
-      await axios.delete(
-        `https://addis-musix-backend.vercel.app/api/song/delete/${songId}`
-      );
-      setSongs((prevSongs) => prevSongs.filter((song) => song._id !== songId));
-    } catch (err) {
-      console.error("Error deleting song:", err);
-    }
+  const handleDelete = (songId) => {
+    dispatch(deleteSong(songId));
   };
 
-  if (songs.length < 1) {
-    return <NotFound />;
-  }
+  if (loading) return <Loader />;
 
   if (error) return <p css={errorStyle}>Error: {error}</p>;
+
+  if (songs.length < 1) return <NotFound />;
 
   return (
     <>
@@ -128,13 +110,13 @@ const Uploads = () => {
         open={editDialogOpen}
         onClose={handleDialogClose}
         songId={currentSongId}
-        onUpdate={fetchUploads} // Refresh the song list after update
+        onUpdate={() => dispatch(fetchUploads(userId))} // Refresh the song list after update
       />
     </>
   );
 };
 
-// Emotion CSS Styles
+// Emotion CSS Styles (same as your original code)
 const songsContainerStyle = css`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -163,11 +145,6 @@ const imageWrapperStyle = css`
   aspect-ratio: 1/1;
   overflow: hidden;
   border-radius: 8px;
-`;
-
-const notFoundContainer = css`
-  text-align: center;
-  min-height: 90vh;
 `;
 
 const coverImageStyle = css`
@@ -214,12 +191,6 @@ const iconsStyle = css`
   top: 0;
   right: 0;
   color: #ff4081;
-`;
-
-const loadingStyle = css`
-  color: #fff;
-  text-align: center;
-  margin-top: 20px;
 `;
 
 const errorStyle = css`
