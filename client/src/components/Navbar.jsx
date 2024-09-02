@@ -108,8 +108,20 @@ function Navbar() {
                 <MenuItem
                   key={page}
                   onClick={() => {
-                    dispatch(changeComponent(page));
-                    handleCloseNavMenu();
+                    handleCloseUserMenu();
+
+                    if (page === "Upload") {
+                      if (token && token !== "undefined") {
+                        dispatch(changeComponent("Upload"));
+                      } else {
+                        alert(
+                          "🎶 No login, No song upload! Let's get you in the groove! 🎤"
+                        );
+                        return;
+                      }
+                    } else {
+                      dispatch(changeComponent(page));
+                    }
                   }}
                 >
                   <Typography sx={{ textAlign: "center" }}>{page}</Typography>
