@@ -15,9 +15,7 @@ const AccessMusics = () => {
       <h2 css={headerStyle}>Unlimited Access to Many Tracks</h2>
       <p css={paragraphStyle}>
         Dive into a vast collection of songs spanning all genres, moods, and
-        styles. Whether you're into classics or the latest hits, we have
-        something for every music lover. Experience high-quality streaming
-        anytime, anywhere!
+        styles. Experience high-quality streaming anytime, anywhere!
       </p>
       <button css={buttonStyle} onClick={handleNavigate}>
         Explore Songs

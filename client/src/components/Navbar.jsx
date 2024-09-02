@@ -132,6 +132,7 @@ function Navbar() {
               color: "inherit",
               textDecoration: "none",
             }}
+            css={navLogo}
           >
             ADDIS-MUSIX
           </Typography>
@@ -214,24 +215,38 @@ function Navbar() {
     </AppBar>
   );
 }
+const navLogo = css`
+  @media (max-width: 450px) {
+    display: none;
+  }
+`;
 const buttonStyle = css`
   position: relative;
   display: inline-block;
-  padding: 7px 20px;
+  padding: 6px 18px;
   background-color: #fd7019;
   color: #fff;
   border-radius: 7px;
-  font-size: 16px;
+  font-size: 14px;
   text-transform: uppercase;
   overflow: hidden;
   z-index: 1;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  transition: 0.8s ease;
+  transition: background-color 0.3s ease, box-shadow 0.8s ease;
   box-shadow: 1px -1px 10px 4px #fd7019;
 
   &:hover {
     box-shadow: 1px -1px 10px 4px #fff;
+  }
+
+  @media (max-width: 690px) {
+    padding: 5px 15px;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 400px) {
+    padding: 4px 10px;
+    font-size: 0.7rem;
   }
 
   &::before {
@@ -241,7 +256,7 @@ const buttonStyle = css`
     left: -100%;
     width: 200%;
     height: 100%;
-    background: linear-gradient(to right, #ff0000, #ff7f00, #0000ff, #4b0082);
+    background: linear-gradient(to right, #ff0000, #081730);
     border-radius: 8px;
     animation: scrollBorder 3s linear infinite;
     z-index: -1;
@@ -258,6 +273,7 @@ const buttonStyle = css`
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     z-index: -1;
+    animation: glowEffect 2s ease-in-out infinite alternate;
   }
 
   @keyframes scrollBorder {
@@ -266,6 +282,15 @@ const buttonStyle = css`
     }
     100% {
       left: 100%;
+    }
+  }
+
+  @keyframes glowEffect {
+    0% {
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
     }
   }
 `;
