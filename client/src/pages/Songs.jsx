@@ -15,6 +15,8 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
+const defaultImage = "/Tumblr.jpg"; // Path to your default image
+
 const Songs = () => {
   const [selectedSong, setSelectedSong] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,8 +97,9 @@ const Songs = () => {
           >
             <div css={imageWrapperStyle}>
               <img
-                src={song.coverImageUrl}
+                src={song.coverImageUrl || defaultImage}
                 alt={song.title}
+                onError={(e) => (e.target.src = defaultImage)} // Fallback to default image if an error occurs
                 css={coverImageStyle}
               />
             </div>
@@ -135,7 +138,6 @@ const Songs = () => {
     </div>
   );
 };
-
 // Emotion CSS Styles
 const searchInputStyle = css`
   width: auto;
