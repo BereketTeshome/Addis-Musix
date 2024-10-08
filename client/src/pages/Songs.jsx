@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSongsRequest,
   fetchFavoriteSongsRequest,
-  toggleFavorite,
+  toggleFavoriteRequest, // Import the saga action for toggling favorites
 } from "../features/songsSlice.jsx";
 import { css } from "@emotion/react";
 import Loader from "../components/Loader";
@@ -13,7 +13,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import IconButton from "@mui/material/IconButton";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 
 const defaultImage = "/Tumblr.jpg"; // Path to your default image
 
@@ -31,8 +30,8 @@ const Songs = () => {
 
   useEffect(() => {
     dispatch(fetchSongsRequest());
-    {
-      uploadedBy && dispatch(fetchFavoriteSongsRequest(uploadedBy));
+    if (uploadedBy) {
+      dispatch(fetchFavoriteSongsRequest(uploadedBy));
     }
   }, [dispatch, uploadedBy]);
 
@@ -44,29 +43,8 @@ const Songs = () => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const handleFavoriteClick = async (song) => {
-    const {
-      _id: songId,
-      title,
-      artist,
-      album,
-      genre,
-      releaseDate,
-      coverImageUrl,
-    } = song;
-
-    await axios.post("http://localhost:3001/api/song/favorite", {
-      songId,
-      title,
-      artist,
-      album,
-      genre,
-      releaseDate,
-      coverImageUrl,
-      uploadedBy,
-    });
-
-    dispatch(toggleFavorite(song._id));
+  const handleFavoriteClick = (song) => {
+    dispatch(toggleFavoriteRequest({ song, uploadedBy })); // Dispatch the saga action for toggling favorites
   };
 
   const filteredSongs = songs.filter(
@@ -110,17 +88,15 @@ const Songs = () => {
                 <IconButton
                   aria-label="add to favorites"
                   css={favoriteIconStyle}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent song click event
+                    handleFavoriteClick(song);
+                  }}
                 >
                   {favoriteSongs.some((fav) => fav.songId === song._id) ? (
                     <FavoriteIcon css={favoriteFilledStyle} />
                   ) : (
-                    <FavoriteBorderOutlinedIcon
-                      css={favoriteBorderStyle}
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent song click event
-                        handleFavoriteClick(song);
-                      }}
-                    />
+                    <FavoriteBorderOutlinedIcon css={favoriteBorderStyle} />
                   )}
                 </IconButton>
               )}
@@ -138,6 +114,7 @@ const Songs = () => {
     </div>
   );
 };
+
 // Emotion CSS Styles
 const searchInputStyle = css`
   width: auto;

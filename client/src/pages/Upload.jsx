@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import {
   TextField,
   Button,
@@ -17,11 +17,14 @@ import { css } from "@emotion/react";
 import UploadVector from "/upload.png";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
+import { uploadSongRequest } from "../features/songsSlice"; // Import the action
 
 const Upload = () => {
+  const dispatch = useDispatch(); // Use dispatch to trigger saga
   const cookie = new Cookies();
   const token = cookie.get("user_token");
   const uploader = jwtDecode(token).userId;
+
   const [formData, setFormData] = useState({
     title: "",
     artist: "",
@@ -40,33 +43,15 @@ const Upload = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const uploadData = {
-        ...formData,
-        coverImageUrl:
-          formData.coverImageUrl ||
-          "https://firebasestorage.googleapis.com/v0/b/test-13c4e.appspot.com/o/No%20user%20profile%20picture.jpg?alt=media&token=fe5793bb-58bb-4b9c-bf81-173cd0006d05",
-      };
-      await axios.post(
-        "https://addis-musix-backend.vercel.app/api/song/create",
-        uploadData
-      );
-      alert("Song uploaded successfully!");
-      setFormData({
-        title: "",
-        artist: "",
-        album: "-",
-        genre: "",
-        releaseDate: "",
-        coverImageUrl: "",
-        uploadedBy: "",
-      });
-    } catch (error) {
-      console.error("Error uploading song:", error);
-      alert("Failed to upload song.");
-    }
+    const uploadData = {
+      ...formData,
+      coverImageUrl:
+        formData.coverImageUrl ||
+        "https://firebasestorage.googleapis.com/v0/b/test-13c4e.appspot.com/o/No%20user%20profile%20picture.jpg?alt=media&token=fe5793bb-58bb-4b9c-bf81-173cd0006d05",
+    };
+    dispatch(uploadSongRequest(uploadData)); // Dispatch the saga action
   };
 
   return (

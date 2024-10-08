@@ -6,11 +6,22 @@ const initialState = {
   error: null,
   favoriteSongs: [],
 };
-
 const songsSlice = createSlice({
   name: "songs",
   initialState,
   reducers: {
+    uploadSongRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    uploadSongSuccess(state, action) {
+      state.loading = false;
+      state.songs.push(action.payload);
+    },
+    uploadSongFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
     fetchSongsRequest(state) {
       state.loading = true;
       state.error = null;
@@ -36,8 +47,14 @@ const songsSlice = createSlice({
       state.error = action.payload;
     },
 
-    toggleFavorite(state, action) {
-      const songId = action.payload;
+    // Toggle favorite song actions
+    toggleFavoriteRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    toggleFavoriteSuccess(state, action) {
+      state.loading = false;
+      const songId = action.payload.songId;
       if (state.favoriteSongs.some((song) => song.songId === songId)) {
         state.favoriteSongs = state.favoriteSongs.filter(
           (song) => song.songId !== songId
@@ -46,14 +63,21 @@ const songsSlice = createSlice({
         state.favoriteSongs.push({ songId });
       }
     },
+    toggleFavoriteFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    // Delete favorite song actions
     deleteFavoriteSongRequest(state) {
       state.loading = true;
       state.error = null;
     },
     deleteFavoriteSongSuccess(state, action) {
       state.loading = false;
+      const songId = action.payload;
       state.favoriteSongs = state.favoriteSongs.filter(
-        (song) => song._id !== action.payload
+        (song) => song.songId !== songId
       );
     },
     deleteFavoriteSongFailure(state, action) {
@@ -64,16 +88,21 @@ const songsSlice = createSlice({
 });
 
 export const {
+  uploadSongRequest,
+  uploadSongSuccess,
+  uploadSongFailure,
   fetchSongsRequest,
   fetchSongsSuccess,
   fetchSongsFailure,
   fetchFavoriteSongsRequest,
   fetchFavoriteSongsSuccess,
   fetchFavoriteSongsFailure,
-  toggleFavorite,
-  deleteFavoriteSongRequest,
-  deleteFavoriteSongSuccess,
-  deleteFavoriteSongFailure,
+  toggleFavoriteRequest,
+  toggleFavoriteSuccess,
+  toggleFavoriteFailure,
+  deleteFavoriteSongRequest, // Make sure this is exported
+  deleteFavoriteSongSuccess, // Make sure this is exported
+  deleteFavoriteSongFailure, // Make sure this is exported
 } = songsSlice.actions;
 
 export default songsSlice.reducer;
