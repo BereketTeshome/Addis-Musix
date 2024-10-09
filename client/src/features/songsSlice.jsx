@@ -10,18 +10,6 @@ const songsSlice = createSlice({
   name: "songs",
   initialState,
   reducers: {
-    uploadSongRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    uploadSongSuccess(state, action) {
-      state.loading = false;
-      state.songs.push(action.payload);
-    },
-    uploadSongFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
     fetchSongsRequest(state) {
       state.loading = true;
       state.error = null;
@@ -46,6 +34,18 @@ const songsSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    uploadSongRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    uploadSongSuccess(state, action) {
+      state.loading = false;
+      state.songs.push(action.payload);
+    },
+    uploadSongFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
 
     // Toggle favorite song actions
     toggleFavoriteRequest(state) {
@@ -64,6 +64,24 @@ const songsSlice = createSlice({
       }
     },
     toggleFavoriteFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    editSongRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    editSongSuccess(state, action) {
+      state.loading = false;
+      const updatedSong = action.payload;
+      const index = state.songs.findIndex(
+        (song) => song._id === updatedSong._id
+      );
+      if (index !== -1) {
+        state.songs[index] = updatedSong;
+      }
+    },
+    editSongFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
@@ -103,6 +121,9 @@ export const {
   deleteFavoriteSongRequest, // Make sure this is exported
   deleteFavoriteSongSuccess, // Make sure this is exported
   deleteFavoriteSongFailure, // Make sure this is exported
+  editSongRequest,
+  editSongSuccess,
+  editSongFailure,
 } = songsSlice.actions;
 
 export default songsSlice.reducer;

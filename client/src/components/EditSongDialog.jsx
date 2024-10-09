@@ -12,9 +12,13 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import axios from "axios";
+import { editSongRequest } from "../features/songsSlice"; // Import the action
+import { useDispatch, useSelector } from "react-redux";
 
 const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.songs);
+
   const [formData, setFormData] = useState({
     title: "",
     artist: "",
@@ -58,19 +62,12 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
     }));
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!isFormValid) return;
 
-    try {
-      await axios.put(
-        `https://addis-musix-backend.vercel.app/api/song/edit/${songId}`,
-        formData
-      );
-      onClose();
-      onUpdate();
-    } catch (error) {
-      console.error("Error updating song:", error);
-    }
+    dispatch(editSongRequest({ songId, formData }));
+    onClose();
+    onUpdate();
   };
 
   return (
@@ -145,7 +142,11 @@ const EditSongDialog = ({ open, onClose, songId, onUpdate }) => {
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleSave} color="primary" disabled={!isFormValid}>
+        <Button
+          onClick={handleSave}
+          color="primary"
+          disabled={!isFormValid || loading}
+        >
           Save
         </Button>
       </DialogActions>

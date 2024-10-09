@@ -10,12 +10,15 @@ import {
   toggleFavoriteRequest,
   toggleFavoriteSuccess,
   toggleFavoriteFailure,
-  deleteFavoriteSongRequest, // Make sure this is correctly imported
-  deleteFavoriteSongSuccess, // Add this action for success
-  deleteFavoriteSongFailure, // Add this action for failure
+  deleteFavoriteSongRequest,
+  deleteFavoriteSongSuccess,
+  deleteFavoriteSongFailure,
   uploadSongRequest,
   uploadSongSuccess,
   uploadSongFailure,
+  editSongRequest, // Add this import to fix the error
+  editSongSuccess,
+  editSongFailure,
 } from "./songsSlice";
 
 // Saga to handle the song upload
@@ -71,6 +74,20 @@ function* deleteFavoriteSongSaga({ payload: songId }) {
   }
 }
 
+// Saga to handle editing a song
+function* editSongSaga(action) {
+  try {
+    const response = yield call(
+      axios.put,
+      `https://addis-musix-backend.vercel.app/api/song/edit/${action.payload.songId}`,
+      action.payload.formData
+    );
+    yield put(editSongSuccess(response.data));
+  } catch (error) {
+    yield put(editSongFailure(error.message));
+  }
+}
+
 // Saga to toggle favorite songs
 function* toggleFavoriteSaga({ payload: { song, uploadedBy } }) {
   try {
@@ -100,5 +117,6 @@ export default function* rootSaga() {
   yield takeEvery(fetchSongsRequest.type, fetchSongsSaga);
   yield takeEvery(fetchFavoriteSongsRequest.type, fetchFavoriteSongsSaga);
   yield takeEvery(deleteFavoriteSongRequest.type, deleteFavoriteSongSaga);
-  yield takeEvery(toggleFavoriteRequest.type, toggleFavoriteSaga); // Add the watcher for the toggle favorite action
+  yield takeEvery(toggleFavoriteRequest.type, toggleFavoriteSaga); // Adds the watcher for the toggle favorite action
+  yield takeEvery(editSongRequest.type, editSongSaga);
 }
